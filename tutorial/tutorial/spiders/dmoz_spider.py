@@ -1,0 +1,34 @@
+from scrapy.spider import Spider
+
+class DmozSpider(Spider):
+    name = "dmoz"
+    allowed_domains = ["dmoz.org"]
+    start_urls = [
+        "http://www.dmoz.org/Computers/Programming/Languages/Python/Books/",
+        "http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/"
+    ]
+
+    def parse(self, response):
+        filename = response.url.split("/")[-2]
+        open(filename, 'wb').write(response.body)
+
+
+
+
+# from scrapy.spider import Spider
+
+# class DmozSpider(Spider): # no type declaration for arg?
+#     name = "dmoz"
+#     allowed_domains = ["dmoz.org"]
+#     start_urls = [
+#         "http://www.dmoz.org/Computers/Programming/Languages/Python/Books/",
+#         "http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/"
+#     ]
+
+#     # where are self, response defined?
+#     # they seem to be types rather than var names
+#     def parse(self, response): 
+#         filename = response.url.split("/")[-2]
+#         open(filename, 'wb').write(repsonse.body)
+
+
