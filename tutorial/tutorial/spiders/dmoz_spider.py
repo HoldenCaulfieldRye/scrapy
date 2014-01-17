@@ -7,6 +7,11 @@ class DmozSpider(BaseSpider):
     start_urls = [
         "http://www.dmoz.org/Computers/Programming/Languages/Python/Books/",
         "http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/"
+        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=1&pas=12#page_recherche_images"
+        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=2&pas=12#page_recherche_images"
+        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=3&pas=12#page_recherche_images"
+        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=4&pas=12#page_recherche_images"
+        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=5&pas=12#page_recherche_images"
     ]
 
     def parse(self, response):
@@ -14,8 +19,12 @@ class DmozSpider(BaseSpider):
         # last 2 occurences of '/' in the URL: 'Books', 'Resources'
         # uses that string to create a file with filename as name, to which
         # response.body is written
-        filename = response.url.split("/")[-2]
-        open(filename, 'wb').write(response.body)
+        books = hxs.select('//ul/li')
+        for book in books:
+            title = book.select('a/text()').extract()
+            link = book.select('a/@href').extract()
+            desc = book.select('text()').extract()
+            print title, desc, link
 
 
 # what's goign to happen?
