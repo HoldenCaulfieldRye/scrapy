@@ -1,16 +1,19 @@
 from scrapy.spider import BaseSpider
+from scrapy.selector import HtmlXPathSelector
+
+from tutorial.items import DmozItem
 
 # this syntax means DmozSpider inherits from BaseSpider(?)
 class DmozSpider(BaseSpider):
     name = "dmoz"
-    allowed_domains = ["dmoz.org"]
+    allowed_domains = ["dmoz.org", "tela-botanica.org"]
     start_urls = [
         "http://www.dmoz.org/Computers/Programming/Languages/Python/Books/",
-        "http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/"
-        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=1&pas=12#page_recherche_images"
-        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=2&pas=12#page_recherche_images"
-        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=3&pas=12#page_recherche_images"
-        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=4&pas=12#page_recherche_images"
+        "http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/",
+        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=1&pas=12#page_recherche_images",
+        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=2&pas=12#page_recherche_images",
+        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=3&pas=12#page_recherche_images",
+        "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=4&pas=12#page_recherche_images",
         "http://www.tela-botanica.org/appli:pictoflora?protocole=1&page=5&pas=12#page_recherche_images"
     ]
 
@@ -19,12 +22,16 @@ class DmozSpider(BaseSpider):
         # last 2 occurences of '/' in the URL: 'Books', 'Resources'
         # uses that string to create a file with filename as name, to which
         # response.body is written
+        hxs = HtmlXPathSelector(response)
         books = hxs.select('//ul/li')
+        items = []
         for book in books:
-            title = book.select('a/text()').extract()
-            link = book.select('a/@href').extract()
-            desc = book.select('text()').extract()
-            print title, desc, link
+            item = DmozItem() # declare item of type DmozItem
+            item['title'] = book.select('a/text()').extract()
+            item['link'] = book.select('a/@href').extract()
+            item['desc'] = book.select('text()').extract()
+            items.append(item)
+        return items
 
 
 # what's goign to happen?
